@@ -6,8 +6,8 @@ window.onload = function() {
 
     btnUsers.onclick = function() {
         xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.response == 200) {
-                console.log(this.response);
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                console.log(xhttp.response);
             }
         };
 
