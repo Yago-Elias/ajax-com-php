@@ -6,9 +6,25 @@ window.onload = function() {
 
     btnUsers.onclick = function() {
         xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
-                console.log(xhttp.response);
+            if (this.readyState == 4 && this.status == 200) {
+                let users = JSON.parse(this.response)
+
+                var table = `<table class="table table-striped">`;
+                table += `<thead><tr><td>ID</td><td>Nome</td><td>Email</td></tr></thead>`;
+                table += `<tbody>`;
+                users.forEach(function(user) {
+                    table += `<tr>`;
+                    table += `<td>${user.id}</td>`;
+                    table += `<td>${user.name}</td>`;
+                    table += `<td>${user.email}</td>`;
+                    table += `</tr>`;
+                });
+                table += `</tbody>`;
+                table += `</table>`;
             }
+
+            divUsers.innerHTML = table;
+            
         };
 
         xhttp.open('GET', 'ajax/user.php', true);
