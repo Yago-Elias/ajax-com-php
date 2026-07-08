@@ -1,0 +1,16 @@
+{
+    "name": "yagoe/ajax",
+    "description": "Ajax com PHP",
+    "autoload": {
+        "psr-4": {
+            "Yagoe\\Ajax\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yago Elias",
+            "email": "yagoelias024@gmail.com"
+        }
+    ],
+    "require": {}
+}
