@@ -10,7 +10,7 @@ abstract class Model {
     }
 
     public function all() {
-        $sql = "select * form {$this->table}";
+        $sql = "select * from {$this->table}";
 
         $all = $this->connection->prepare($sql);
 

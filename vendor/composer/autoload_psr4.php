@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Yagoe\\Ajax\\' => array($baseDir . '/app'),
+    'app\\' => array($baseDir . '/app'),
 );

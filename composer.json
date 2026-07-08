@@ -3,7 +3,7 @@
     "description": "Ajax com PHP",
     "autoload": {
         "psr-4": {
-            "Yagoe\\Ajax\\": "app/"
+            "app\\": "app/"
         }
     },
     "authors": [

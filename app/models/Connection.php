@@ -4,7 +4,7 @@ namespace app\models;
 
 use PDO;
 
-class Connetion {
+class Connection {
 
     public static function connect() {
         // $pdo = new PDO("mysql:host=localhost;dbname=users", "root", "root");

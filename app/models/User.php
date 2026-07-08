@@ -7,5 +7,3 @@ class User extends Model {
 
     
 }
-
-echo json_encode('deu certo');
