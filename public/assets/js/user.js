@@ -10,6 +10,8 @@ window.onload = function() {
             });
 
             success(function() {
+                console.log(JSON.parse(xhttp.responseText));
+                
                 var users = JSON.parse(xhttp.response)
                 var table = `<table class="table table-striped">`;
                 table += `<thead><tr><td>ID</td><td>Nome</td><td>Email</td></tr></thead>`;
