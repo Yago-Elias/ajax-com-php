@@ -15,6 +15,7 @@
         </div>
     </div>
 
+    <script src="assets/js/xhttp_request.js"></script>
     <script src="assets/js/user.js"></script>
 </body>
 </html>

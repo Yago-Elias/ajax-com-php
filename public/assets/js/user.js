@@ -1,17 +1,16 @@
 window.onload = function() {
-    var xhttp = new XMLHttpRequest();
     var btnUsers = document.querySelector('#btn-users');
     var divUsers = document.querySelector('#div-users');
 
 
     btnUsers.onclick = function() {
-        xhttp.onreadystatechange = function() {
-            if (this.readyState < 4) {
+        xmlHttpGet('ajax/user', function() {
+            beforeSend(function() {
                 divUsers.innerHTML = `<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">Carregando...</span>`;
-            }
-            else if (this.readyState == 4 && this.status == 200) {
-                let users = JSON.parse(this.response)
+            });
 
+            success(function() {
+                var users = JSON.parse(xhttp.response)
                 var table = `<table class="table table-striped">`;
                 table += `<thead><tr><td>ID</td><td>Nome</td><td>Email</td></tr></thead>`;
                 table += `<tbody>`;
@@ -26,11 +25,11 @@ window.onload = function() {
                 table += `</table>`;
                 
                 divUsers.innerHTML = table;
-            }
-            
-        };
+            });
 
-        xhttp.open('GET', 'ajax/user.php', true);
-        xhttp.send();
+            error(function() {
+                divUsers.innerHTML = 'Ocorreu um erro';
+            });
+        });
     }
 }
