@@ -1,6 +1,31 @@
 window.onload = function() {
     var btnUsers = document.querySelector('#btn-users');
     var divUsers = document.querySelector('#div-users');
+    var formCadastrar = document.querySelector('#form-cadastrar');
+    var divCreate = document.querySelector('#div-create');
+
+    formCadastrar.onsubmit = function(event) {
+        event.preventDefault();
+
+        var form = new FormData(formCadastrar);
+        
+        xmlHttpPost('ajax/create', function() {
+            beforeSend(function() {
+                divCreate.innerHTML = `<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">Agurde...</span>`;
+            });
+
+            success(function() {
+                var response = xhttp.responseText;
+
+                if (response == 'cadastrado') {
+                    divCreate.innerHTML = 'Cadastro realizado com sucesso!';
+                }
+                if (response == 'erro') {
+                    divCreate.innerHTML = 'Ocorreu um erro, tente novamente!';
+                }
+            });
+        }, form);
+    };
 
 
     btnUsers.onclick = function() {

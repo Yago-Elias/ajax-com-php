@@ -26,7 +26,7 @@
 
                 <div id="menu1" class="tab-pane fade">
                     <br>
-                    <div id="create"></div>
+                    <div id="div-create"></div>
                     <form action="" method="POST" role="form" id="form-cadastrar" enctype="multipart/formdata">
                         <div class="form-group">
                             <label for="">Nome</label>
