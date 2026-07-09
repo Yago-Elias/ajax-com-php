@@ -5,4 +5,6 @@ require '../../config.php';
 use app\models\User;
 
 $user = new User;
-echo json_encode($user->all());
+sleep(3);
+$id = $_GET['id'];
+echo json_encode($user->find('id', $id));

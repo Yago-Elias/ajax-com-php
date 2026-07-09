@@ -30,6 +30,6 @@ window.onload = function() {
             error(function() {
                 divUsers.innerHTML = 'Ocorreu um erro';
             });
-        });
+        }, '?id=1');
     }
 }
