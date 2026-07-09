@@ -45,10 +45,10 @@
                 <div id="menu2" class="tab-pane fade">
                     <br>
                     <form action="" id="form-buscar">
-                        <input type="text" name="user">
-                        <button type="submit" id="btn-buscar">Buscar</button>
+                        <input type="text" name="name">
+                        <button type="submit">Buscar</button>
                         <hr>
-                        <div id="div-busca"></div>
+                        <div id="div-buscar"></div>
                     </form>
                 </div>
             </div>

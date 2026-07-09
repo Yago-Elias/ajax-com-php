@@ -3,6 +3,39 @@ window.onload = function() {
     var divUsers = document.querySelector('#div-users');
     var formCadastrar = document.querySelector('#form-cadastrar');
     var divCreate = document.querySelector('#div-create');
+    var formBuscar = document.querySelector('#form-buscar');
+    var divBuscar = document.querySelector('#div-buscar');
+
+    formBuscar.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        var form = new FormData(formBuscar);
+        xmlHttpPost('ajax/buscar', function() {
+            beforeSend(function() {
+                divBuscar.innerHTML = `<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> <span>Buscando resultados...</span>`;
+            });
+
+            success(function() {
+                if (xhttp.responseText == 'nouser') {
+                    divBuscar.innerHTML = 'Nenhum usuário encontrado';
+                } else {
+                    var users = JSON.parse(xhttp.responseText);
+                    var table = `<table class="table table-striped">`;
+                    table += `<thead><tr><td>ID</td><td>Nome</td><td>Email</td></tr></thead>`;
+                    table += `<tbody>`
+                    users.forEach(function(user) {
+                        table += `<tr>`;
+                        table += `<td>${user.id}</td>`;
+                        table += `<td>${user.name}</td>`;
+                        table += `<td>${user.email}</td>`;
+                        table += `</tr>`;
+                    });
+                    table += `</tbody></table>`;
+                    divBuscar.innerHTML = table;
+                }
+            });
+        }, form);
+    });
 
     formCadastrar.onsubmit = function(event) {
         event.preventDefault();
@@ -26,7 +59,6 @@ window.onload = function() {
             });
         }, form);
     };
-
 
     btnUsers.onclick = function() {
         xmlHttpGet('ajax/user', function() {
