@@ -6,7 +6,10 @@ window.onload = function() {
 
     btnUsers.onclick = function() {
         xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
+            if (this.readyState < 4) {
+                divUsers.innerHTML = `<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">Carregando...</span>`;
+            }
+            else if (this.readyState == 4 && this.status == 200) {
                 let users = JSON.parse(this.response)
 
                 var table = `<table class="table table-striped">`;
@@ -21,9 +24,9 @@ window.onload = function() {
                 });
                 table += `</tbody>`;
                 table += `</table>`;
+                
+                divUsers.innerHTML = table;
             }
-
-            divUsers.innerHTML = table;
             
         };
 
