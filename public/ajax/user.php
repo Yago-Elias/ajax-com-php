@@ -7,4 +7,4 @@ use app\models\User;
 $user = new User;
 sleep(3);
 $id = $_GET['id'];
-echo json_encode($user->find('id', $id));
+echo json_encode($user->all());

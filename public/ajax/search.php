@@ -7,7 +7,7 @@ use app\models\User;
 $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
 
 $user = new User;
-$resultados = $user->buscar($name);
+$resultados = $user->search($name);
 if (!$resultados || empty($resultados)) {
     echo 'nouser';
 } else {

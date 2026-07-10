@@ -15,12 +15,12 @@ class User extends Model {
         return $this->connection->lastInsertId();
     }
 
-    public function buscar($name) {
+    public function search($name) {
         $sql = "select * from {$this->table} where name like :name";
-        $buscar = $this->connection->prepare($sql);
-        $buscar->bindValue(':name', "%". $name . "%");
-        $buscar->execute();
+        $search_user = $this->connection->prepare($sql);
+        $search_user->bindValue(':name', "%". $name . "%");
+        $search_user->execute();
 
-        return $buscar->fetchAll();
+        return $search_user->fetchAll();
     }
 }
