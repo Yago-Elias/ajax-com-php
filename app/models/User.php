@@ -23,4 +23,15 @@ class User extends Model {
 
         return $search_user->fetchAll();
     }
+
+    public function update($id, $name, $email) {
+        $sql = "update {$this->table} set name = :name, email = :email where id = :id";
+        $update_user = $this->connection->prepare($sql);
+        $update_user->bindValue(':id', $id);
+        $update_user->bindValue(':name', $name);
+        $update_user->bindValue(':email', $email);
+        $update_user->execute();
+
+        return $update_user->rowCount() > 0;
+    }
 }

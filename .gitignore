@@ -1,0 +1,29 @@
+# Banco de dados SQLite
+database/*.sqlite
+database/*.sqlite-journal
+database/*.sqlite-wal
+database/*.sqlite-shm
+
+# Dependências do Composer
+/vendor/
+
+# Variáveis de ambiente / configs sensíveis
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs / editores
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# PHP
+composer.phar

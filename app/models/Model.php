@@ -27,4 +27,11 @@ abstract class Model {
 
         return $find->fetch();
     }
+
+    public function delete($id) {
+        $sql = "delete from {$this->table} where id = :id";
+        $delete_user = $this->connection->prepare($sql);
+        $delete_user->bindValue(':id', $id);
+        return $delete_user->execute();
+    }
 }

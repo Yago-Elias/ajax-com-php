@@ -11,8 +11,8 @@
     <div class="container">
         <div class="row">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#home" data-toggle="tab">Usuários</a></li>
-                <li><a href="#menu1" data-toggle="tab">Cadastrar</a></li>
+                <li class="active" id="home-menu"><a href="#home" data-toggle="tab">Usuários</a></li>
+                <li id="signup-menu"><a href="#menu1" id="title-menu-signup" data-toggle="tab">Cadastrar</a></li>
                 <li><a href="#menu2" data-toggle="tab">Buscar</a></li>
             </ul>
 
@@ -30,15 +30,15 @@
                     <form action="" method="POST" role="form" id="form-cadastrar" enctype="multipart/formdata">
                         <div class="form-group">
                             <label for="">Nome</label>
-                            <input type="text" class="form-control" name="name" placehoder="Nome">
+                            <input type="text" id="input-name" class="form-control" name="name" placeholder="Nome">
                         </div>
 
                         <div class="form-group">
                             <label for="">Email</label>
-                            <input type="text" class="form-control" name="email" placeholder="Email">
+                            <input type="text" id="input-email" class="form-control" name="email" placeholder="Email">
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                        <button type="submit" id="btn-signup" class="btn btn-primary">Cadastrar</button>
                     </form>
                 </div>
                 
