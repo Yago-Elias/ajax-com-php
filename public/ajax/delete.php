@@ -7,4 +7,4 @@ use app\models\User;
 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 $user = new User;
 $deleted = $user->delete($id);
-echo json_encode(['success' => (bool) $id]);
+echo json_encode(['success' => $deleted]);
