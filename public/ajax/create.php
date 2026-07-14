@@ -9,10 +9,17 @@ $user = new User;
 $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
 $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
 
-$cadastrado = $user->create($name, $email);
+$id = $user->create($name, $email);
 
-if ($cadastrado) {
-    echo 'cadastrado';
+if ($id) {
+    echo json_encode([
+        'success' => true, 
+        'message' => 'Usuário cadastrado com sucesso', 
+        'data' => ['id' => $id]
+    ]);
 } else {
-    echo 'erro';
+    echo json_encode([
+        'success' => false,
+        'message' => 'Erro ao cadastrar usuário.'
+    ]);
 }

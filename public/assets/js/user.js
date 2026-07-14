@@ -4,7 +4,7 @@ window.onload = function() {
     var divUsers = document.querySelector('#div-users');
     var formCadastrar = document.querySelector('#form-cadastrar');
     var divCreate = document.querySelector('#div-create');
-    var formBuscar = document.querySelector('#form-buscar');
+    var formSearch = document.querySelector('#form-buscar');
     var divBuscar = document.querySelector('#div-buscar');
     var titleMenu = document.getElementById('title-menu-signup');
     var btnUpdate = null;
@@ -36,7 +36,7 @@ window.onload = function() {
 
         try {
             const response = await axios.get('ajax/user.php', null);
-            divUsers.innerHTML = userTable(response.data);
+            divUsers.innerHTML = userTable(response.data.data);
         } catch (error) {
             console.error('Erro ao buscar usuários:', error);
             divUsers.innerHTML = 'Ocorreu um erro.';
@@ -66,6 +66,9 @@ window.onload = function() {
     formCadastrar.onsubmit = async function(event) {
         event.preventDefault();
 
+        inputName = document.getElementById('input-name');
+        inputEmail = document.getElementById('input-email');
+
         var payload = new URLSearchParams;
         payload.append('name', inputName.value);
         payload.append('email', inputEmail.value);
@@ -74,14 +77,14 @@ window.onload = function() {
         try {
             if (editingUserId) {
                 payload.append('id', editingUserId);
-                await axios.post('ajax/update.php', payload);
-                divCreate.innerHTML = msgSuccess('Usuário atualizado com sucesso!');
+                const response = await axios.post('ajax/update.php', payload);
+                divCreate.innerHTML = msgSuccess(response.data.message);
                 editingUserId = null;
                 titleMenu.innerHTML = 'Cadastrar';
                 btnUpdate.innerHTML = 'Cadastrar';
             } else {
-                await axios.post('ajax/create.php', payload);
-                divCreate.innerHTML = msgSuccess('Cadastro realizado com sucesso!');
+                const response = await axios.post('ajax/create.php', payload);
+                divCreate.innerHTML = msgSuccess(response.data.message);
             }
 
             formCadastrar.reset();
@@ -92,19 +95,19 @@ window.onload = function() {
         }
     };
 
-    formBuscar.addEventListener('submit', async function(event) {
+    formSearch.addEventListener('submit', async function(event) {
         event.preventDefault();
 
-        var form = new FormData(formBuscar);
+        var form = new FormData(formSearch);
         divBuscar.innerHTML = `<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">Aguarde...</span>`;
 
         try {
             const response = await axios.post('ajax/search.php', form);
 
-            if (response.data == 'nouser') {
-                divBuscar.innerHTML = 'Nenhum usuário encontrado';
+            if (!response.data.success) {
+                divBuscar.innerHTML = response.data.message;
             } else {
-                divBuscar.innerHTML = userTable(response.data);
+                divBuscar.innerHTML = userTable(response.data.data);
             }
         } catch (error) {
             console.log('Erro ao buscar: ', error);
@@ -124,12 +127,12 @@ window.onload = function() {
         
         if (editBtn) {
             var idUser = editBtn.dataset.id;
-            inputName = document.querySelector('#input-name');
-            inputEmail = document.querySelector('#input-email');
+            inputName = document.getElementById('input-name');
+            inputEmail = document.getElementById('input-email');
             
             try {
                 const response = await axios.get('ajax/user.php', {params: {id: idUser}});
-                var user = response.data;
+                var user = response.data.data;
                 editingUserId = user.id;
                 inputName.value = user.name;
                 inputEmail.value = user.email;
@@ -157,8 +160,10 @@ window.onload = function() {
             payload.append('id', idUser);
             try {
                 const response = await axios.post('ajax/delete.php', payload);
-                if (response.data.success)
+                if (response.data.success) {
+                    document.getElementById('div-message').innerHTML = response.data.message;
                     loadUsers();
+                }
             } catch (error) {
                 console.log('Ocorreu um erro: ' + error);
             }

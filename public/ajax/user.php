@@ -8,7 +8,13 @@ $user = new User;
 $id = $_GET['id'];
 
 if ($id) {
-    echo json_encode($user->find('id', $id));
+    $data = $user->find('id', $id);
 } else {
-    echo json_encode($user->all());
+    $data = $user->all();
 }
+
+echo json_encode([
+    'success' => (bool) $data, 
+    'message' => 'Usuário encontrado.',
+    'data' => $data
+]);

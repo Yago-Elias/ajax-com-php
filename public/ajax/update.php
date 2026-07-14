@@ -10,4 +10,7 @@ $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
 $user = new User;
 $updated = $user->update($id, $name, $email);
 
-echo json_encode(['success' => (bool) $updated]);
+echo json_encode([
+    'success' => (bool) $updated,
+    'message' => $updated ? 'Usuário atualizado com sucesso.' : 'Erro ao atualizar usuário.'
+]);

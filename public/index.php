@@ -21,6 +21,8 @@
                     <br>
                     <button id="btn-users" class="btn btn-default">Listar usuários</button>
                     <hr>
+                    <div id="div-message"></div>
+                    <hr>
                     <div id="div-users"></div>
                 </div>
 
