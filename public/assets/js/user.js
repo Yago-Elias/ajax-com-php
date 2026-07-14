@@ -32,7 +32,7 @@ window.onload = function() {
     }
 
     async function loadUsers() {
-        divUsers.innerHTML = `<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">Aguarde...</span>`;
+        showLoading(divUsers);
 
         try {
             const response = await axios.get('ajax/user.php', null);
@@ -83,6 +83,11 @@ window.onload = function() {
         showFieldError('group-email', 'error-email', '');
     }
 
+    // mostra o spinner de carregamnto
+    function showLoading(el) {
+        el.innerHTML = `<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">Aguarde...</span>`;
+    }
+
     var divMessage = document.getElementById('div-message');
 
     // mostra mensagems em qualquer página
@@ -131,6 +136,8 @@ window.onload = function() {
     formSignup.onsubmit = async function(event) {
         event.preventDefault();
 
+        var btnSubmit = document.querySelector('button[type="submit"]');
+        btnSubmit.disabled = true;
         clearFormError();
 
         var error = validateForm(inputName.value, inputEmail.value);
@@ -139,6 +146,8 @@ window.onload = function() {
         if (Object.keys(error).length > 0) {
             if (error.name) showFieldError('group-name', 'error-name', error.name);
             if (error.email) showFieldError('group-email', 'error-email', error.email);
+            btnSubmit.disabled = false;
+
             return;
         }
 
@@ -146,7 +155,7 @@ window.onload = function() {
         payload.append('name', inputName.value);
         payload.append('email', inputEmail.value);
         
-        divCreate.innerHTML = `<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">Aguarde...</span>`;
+        showLoading(divCreate);
         try {
             if (editingUserId) {
                 payload.append('id', editingUserId);
@@ -165,8 +174,9 @@ window.onload = function() {
             formSignup.reset();
             loadUsers();
         } catch (error) {
-            console.log('Erro: '+error);
             divCreate.innerHTML = showMessageInline('danger', 'Ocorreu um erro, tente novamente!', 6000);
+        } finally {
+            btnSubmit.disabled = false;
         }
     };
 
@@ -182,7 +192,7 @@ window.onload = function() {
         event.preventDefault();
 
         var form = new FormData(formSearch);
-        divBuscar.innerHTML = `<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">Aguarde...</span>`;
+        showLoading(divBuscar);
 
         try {
             const response = await axios.post('ajax/search.php', form);
@@ -193,7 +203,6 @@ window.onload = function() {
                 divBuscar.innerHTML = userTable(response.data.data);
             }
         } catch (error) {
-            console.log('Erro ao buscar: ', error);
             divBuscar.innerHTML = showMessageInline('danger', 'Ocorreu um erro ao buscar', 6000);
         }
     });

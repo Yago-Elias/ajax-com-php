@@ -34,4 +34,23 @@ class User extends Model {
 
         return $update_user->rowCount() > 0;
     }
+
+    public function findByEmail($email) {
+        $sql = "select * from {$this->table} where email = :email";
+        $find = $this->connection->prepare($sql);
+        $find->bindValue(':email', $email);
+        $find->execute();
+
+        return $find->fetch();
+    }
+
+    public function findByEmailExceptId($email, $id) {
+        $sql = "select * from {$this->table} where email = :email and id != :id";
+        $find = $this->connection->prepare($sql);
+        $find->bindValue(':email', $email);
+        $find->bindValue(':id', $id);
+        $find->execute();
+
+        return $find->fetch();
+    }
 }
