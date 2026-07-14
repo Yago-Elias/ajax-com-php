@@ -24,23 +24,23 @@
                     <br>
                     <button id="btn-users" class="btn btn-default">Listar usuários</button>
                     <hr>
-                    <div id="div-message"></div>
-                    <hr>
                     <div id="div-users"></div>
                 </div>
 
                 <div id="menu1" class="tab-pane fade">
                     <br>
                     <div id="div-create"></div>
-                    <form action="" method="POST" role="form" id="form-cadastrar" enctype="multipart/formdata">
-                        <div class="form-group">
+                    <form action="" method="POST" role="form" id="form-signup" enctype="multipart/formdata">
+                        <div class="form-group" id="group-name">
                             <label for="">Nome</label>
                             <input type="text" id="input-name" class="form-control" name="name" placeholder="Nome">
+                            <span class="help-block" id="error-name"></span>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="group-email">
                             <label for="">Email</label>
                             <input type="text" id="input-email" class="form-control" name="email" placeholder="Email">
+                            <span class="help-block" id="error-email"></span>
                         </div>
 
                         <button type="submit" id="btn-signup" class="btn btn-primary">Cadastrar</button>

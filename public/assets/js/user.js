@@ -2,14 +2,14 @@ window.onload = function() {
     var editingUserId = null;
     var btnUsers = document.querySelector('#btn-users');
     var divUsers = document.querySelector('#div-users');
-    var formCadastrar = document.querySelector('#form-cadastrar');
+    var formSignup = document.querySelector('#form-signup');
     var divCreate = document.querySelector('#div-create');
     var formSearch = document.querySelector('#form-buscar');
     var divBuscar = document.querySelector('#div-buscar');
     var titleMenu = document.getElementById('title-menu-signup');
     var btnUpdate = null;
-    var inputName = null;
-    var inputEmail = null;
+    var inputName = document.getElementById('input-name');
+    var inputEmail = document.getElementById('input-email');
 
     function userTable(users) {
         var table = `<table class="table table-striped">`;
@@ -43,8 +43,49 @@ window.onload = function() {
         }
     }
 
+    // valida as informações do formulário de cadastro
+    function validateForm(name, email) {
+        var errors = {};
+
+        if (!name.trim()) {
+            errors.name = 'O nome é obrigatório.';
+        }
+
+        if (!email.trim()) {
+            errors.email = 'O email é obrigatório.';
+        } else {
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errors.email = 'Informe um email válido.';
+            }
+        }
+
+        return errors;
+    }
+
+    // mostra uma mensagem de erro de acordo com cada campo
+    function showFieldError(groupId, errorId, message) {
+        var group = document.getElementById(groupId);
+        var errorEl = document.getElementById(errorId);
+
+        if (message) {
+            group.classList.add('has-error');
+            errorEl.textContent = message;
+        } else {
+            group.classList.remove('has-error');
+            errorEl.textContent = '';
+        }
+    }
+
+    // limpa as mensagens de erro
+    function clearFormError() {
+        showFieldError('group-name', 'error-name', '');
+        showFieldError('group-email', 'error-email', '');
+    }
+
     var divMessage = document.getElementById('div-message');
 
+    // mostra mensagems em qualquer página
     function showMessage(type, text, timeout) {
         timeout = timeout || 4000;
 
@@ -64,31 +105,42 @@ window.onload = function() {
         }, timeout);
     }
 
-    function msgSuccess(msg) {
-        var div = `<div class="alert alert-success" role="alert">`;
-        div += msg;
-        div += `</div>`;
+    // mostra mensagens em uma página específica (inline)
+    function showMessageInline(type, text, timeout) {
+        timeout = timeout || 4000;
 
-        return div;
-    }
+        var alertClass = type ==='success' ? 'alert-success' : 'alert-danger';
+        var alertId = 'alert-' + Date.now();
 
-    function msgError(msg) {
-        var div = `<div class="alert alert-danger" role="alert">`;
-        div += msg;
-        div += `</div>`;
-        
-        return div;
+        var html = `<div id="${alertId}" class="alert ${alertClass}" role="alert">`;
+        html += text;
+        html += `</div>`;
+
+        setTimeout(function() {
+            var el = document.getElementById(alertId);
+            if (el) el.remove();
+        }, timeout);
+
+        return html;
     }
 
     // Buscar todos os usuários
     btnUsers.onclick = loadUsers;
 
     // Cadastrar/atualizar usuário
-    formCadastrar.onsubmit = async function(event) {
+    formSignup.onsubmit = async function(event) {
         event.preventDefault();
 
-        inputName = document.getElementById('input-name');
-        inputEmail = document.getElementById('input-email');
+        clearFormError();
+
+        var error = validateForm(inputName.value, inputEmail.value);
+
+        // se houver algum erro, mostra o erro e não envia para o backend
+        if (Object.keys(error).length > 0) {
+            if (error.name) showFieldError('group-name', 'error-name', error.name);
+            if (error.email) showFieldError('group-email', 'error-email', error.email);
+            return;
+        }
 
         var payload = new URLSearchParams;
         payload.append('name', inputName.value);
@@ -99,22 +151,32 @@ window.onload = function() {
             if (editingUserId) {
                 payload.append('id', editingUserId);
                 const response = await axios.post('ajax/update.php', payload);
-                divCreate.innerHTML = msgSuccess(response.data.message);
+                let status = response.data.success ? 'success' : 'danger';
+                divCreate.innerHTML = showMessageInline(status, response.data.message, 6000);
                 editingUserId = null;
                 titleMenu.innerHTML = 'Cadastrar';
                 btnUpdate.innerHTML = 'Cadastrar';
             } else {
                 const response = await axios.post('ajax/create.php', payload);
-                divCreate.innerHTML = msgSuccess(response.data.message);
+                let status = response.data.success ? 'success' : 'danger';
+                divCreate.innerHTML = showMessageInline(status, response.data.message, 6000);
             }
 
-            formCadastrar.reset();
+            formSignup.reset();
             loadUsers();
         } catch (error) {
             console.log('Erro: '+error);
-            divCreate.innerHTML = msgError('Ocorreu um erro, tente novamente!');
+            divCreate.innerHTML = showMessageInline('danger', 'Ocorreu um erro, tente novamente!', 6000);
         }
     };
+
+    // limpa as mensgagens de erro ao digitar
+    inputName.addEventListener('input', function() {
+        showFieldError('group-name', 'error-name', '');
+    });
+    inputEmail.addEventListener('input', function() {
+        showFieldError('group-email', 'error-email', '');
+    });
 
     formSearch.addEventListener('submit', async function(event) {
         event.preventDefault();
@@ -132,7 +194,7 @@ window.onload = function() {
             }
         } catch (error) {
             console.log('Erro ao buscar: ', error);
-            divBuscar.innerHTML = msgError('Ocorreu um erro ao buscar');
+            divBuscar.innerHTML = showMessageInline('danger', 'Ocorreu um erro ao buscar', 6000);
         }
     });
 
