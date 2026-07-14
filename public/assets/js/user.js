@@ -43,6 +43,27 @@ window.onload = function() {
         }
     }
 
+    var divMessage = document.getElementById('div-message');
+
+    function showMessage(type, text, timeout) {
+        timeout = timeout || 4000;
+
+        var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        var alertId = 'alert-' + Date.now();
+
+        var html = `<div id="${alertId}" class="alert ${alertClass} alert-dismissible" role="alert">`;
+        html += `<button type="button" class="close" data-dismiss="alert" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>`;
+        html += text;
+        html += `</div>`;
+
+        divMessage.insertAdjacentHTML('beforeend', html);
+
+        setTimeout(function() {
+            var el = document.getElementById(alertId);
+            if (el) el.remove();
+        }, timeout);
+    }
+
     function msgSuccess(msg) {
         var div = `<div class="alert alert-success" role="alert">`;
         div += msg;
@@ -153,18 +174,21 @@ window.onload = function() {
         if (deleteBtn) {
             var idUser = deleteBtn.dataset.id;
 
-            var corfirm = confirm('Deseja realmente excluir o usuário?');
-            if (!confirm) return;
+            var confirmed = confirm('Deseja realmente excluir o usuário?');
+            if (!confirmed) return;
 
             var payload = new URLSearchParams();
             payload.append('id', idUser);
             try {
                 const response = await axios.post('ajax/delete.php', payload);
                 if (response.data.success) {
-                    document.getElementById('div-message').innerHTML = response.data.message;
+                    showMessage('success', response.data.message);
                     loadUsers();
+                } else {
+                    showMessage('danger', response.data.message);
                 }
             } catch (error) {
+                    showMessage('danger', 'Ocorreu um erro ao excluir.');
                 console.log('Ocorreu um erro: ' + error);
             }
         }
