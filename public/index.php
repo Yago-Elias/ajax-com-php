@@ -50,8 +50,10 @@
                 <div id="menu2" class="tab-pane fade">
                     <br>
                     <form action="" id="form-buscar">
-                        <input type="text" name="name">
-                        <button type="submit">Buscar</button>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="name">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Buscar</button>
                         <hr>
                         <div id="div-buscar"></div>
                     </form>

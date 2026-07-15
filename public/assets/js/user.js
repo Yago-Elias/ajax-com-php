@@ -1,5 +1,5 @@
 const api = axios.create({
-    baseURL: 'ajax/'
+    baseURL: 'ajax/users'
 });
 
 const ROUTE_CREATE = 'create.php';
@@ -235,7 +235,7 @@ window.onload = function() {
         showLoading(divBuscar);
 
         try {
-            const response = await api.post('ajax/search.php', form);
+            const response = await api.post(ROUTE_SEARCH, form);
 
             if (!response.data.success) {
                 divBuscar.innerHTML = response.data.message;
