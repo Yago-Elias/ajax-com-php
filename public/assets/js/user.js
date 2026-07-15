@@ -1,3 +1,13 @@
+const api = axios.create({
+    baseURL: 'ajax/'
+});
+
+const ROUTE_CREATE = 'create.php';
+const ROUTE_READ   = 'user.php';
+const ROUTE_UPDATE = 'update.php';
+const ROUTE_DELETE = 'delete.php';
+const ROUTE_SEARCH = 'search.php';
+
 window.onload = function() {
     axios.interceptors.response.use(
         function(response) {
@@ -58,7 +68,7 @@ window.onload = function() {
         showLoading(divUsers);
 
         try {
-            const response = await axios.get('ajax/user.php', null);
+            const response = await api.get(ROUTE_READ, null);
             divUsers.innerHTML = userTable(response.data.data);
         } catch (error) {
             divUsers.innerHTML = '';
@@ -181,14 +191,14 @@ window.onload = function() {
         try {
             if (editingUserId) {
                 payload.append('id', editingUserId);
-                const response = await axios.post('ajax/update.php', payload);
+                const response = await api.post(ROUTE_UPDATE, payload);
                 let status = response.data.success ? 'success' : 'danger';
                 divCreate.innerHTML = showMessageInline(status, response.data.message, 6000);
                 editingUserId = null;
                 titleMenu.innerHTML = 'Cadastrar';
                 btnUpdate.innerHTML = 'Cadastrar';
             } else {
-                const response = await axios.post('ajax/create.php', payload);
+                const response = await api.post(ROUTE_CREATE, payload);
                 let status = response.data.success ? 'success' : 'danger';
                 divCreate.innerHTML = showMessageInline(status, response.data.message, 6000);
             }
@@ -217,7 +227,7 @@ window.onload = function() {
         showLoading(divBuscar);
 
         try {
-            const response = await axios.post('ajax/search.php', form);
+            const response = await api.post('ajax/search.php', form);
 
             if (!response.data.success) {
                 divBuscar.innerHTML = response.data.message;
@@ -245,7 +255,7 @@ window.onload = function() {
             inputEmail = document.getElementById('input-email');
             
             try {
-                const response = await axios.get('ajax/user.php', {params: {id: idUser}});
+                const response = await api.get(ROUTE_READ, {params: {id: idUser}});
                 var user = response.data.data;
                 editingUserId = user.id;
                 inputName.value = user.name;
@@ -273,7 +283,7 @@ window.onload = function() {
             var payload = new URLSearchParams();
             payload.append('id', idUser);
             try {
-                const response = await axios.post('ajax/delete.php', payload);
+                const response = await api.post(ROUTE_DELETE, payload);
                 if (response.data.success) {
                     showMessage('success', response.data.message);
                     loadUsers();
