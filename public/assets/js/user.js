@@ -8,6 +8,14 @@ const ROUTE_UPDATE = 'update.php';
 const ROUTE_DELETE = 'delete.php';
 const ROUTE_SEARCH = 'search.php';
 
+function escapeHtml(text) {
+    if (text == null) return '';
+
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 window.onload = function() {
     axios.interceptors.response.use(
         function(response) {
@@ -51,8 +59,8 @@ window.onload = function() {
         users.forEach(function(user) {
             table += `<tr>`;
             table += `<td>${user.id}</td>`;
-            table += `<td>${user.name}</td>`;
-            table += `<td>${user.email}</td>`;
+            table += `<td>${escapeHtml(user.name)}</td>`;
+            table += `<td>${escapeHtml(user.email)}</td>`;
             table += `<td>`;
             table += `<button type="button" class="btn btn-edit-user" data-id="${user.id}"><i class="fa fa-pencil fa-fw"></i></button>`;
             table += `<button type="button" class="btn btn-delete-user" data-id="${user.id}"><i class="fa fa-trash fa-fw"></i></button>`;

@@ -6,8 +6,13 @@ use app\models\User;
 
 $user = new User;
 
-$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
+$name = trim(filter_input(INPUT_POST, 'name', FILTER_DEFAULT) ?? '');
+$email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+
+if (!$email) {
+    echo json_encode(['success' => false, 'message' => 'E-mail inválido.']);
+    exit;
+}
 
 $exist = $user->findByEmail($email);
 if ($exist) {
