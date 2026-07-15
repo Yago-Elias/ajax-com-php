@@ -1,4 +1,27 @@
 window.onload = function() {
+    axios.interceptors.response.use(
+        function(response) {
+            // qualquer resposta 2xx, apenas retorna
+            return response;
+        },
+        function(error) {
+            // erro de rede, timeout, outras respostas (status 404, 500, ...)
+            if (error.response) {
+                // resposta do servidor, mas com status de erro
+                showMessage('danger', 'Erro no servidor: ' + error.response.status);
+            } else if (error.request) {
+                // requisição feita mas sem resposta
+                showMessage('danger', 'Não foi possível conectar ao servidor.');
+            } else {
+                // erro ao montar a requisição
+                showMessage('danger', 'Erro inesperado: ' + error.message);
+            }
+
+            // repassa o erro para o catch local
+            return Promise.reject(error);
+        }
+    );
+
     var editingUserId = null;
     var btnUsers = document.querySelector('#btn-users');
     var divUsers = document.querySelector('#div-users');
@@ -38,8 +61,7 @@ window.onload = function() {
             const response = await axios.get('ajax/user.php', null);
             divUsers.innerHTML = userTable(response.data.data);
         } catch (error) {
-            console.error('Erro ao buscar usuários:', error);
-            divUsers.innerHTML = 'Ocorreu um erro.';
+            divUsers.innerHTML = '';
         }
     }
 
@@ -174,7 +196,7 @@ window.onload = function() {
             formSignup.reset();
             loadUsers();
         } catch (error) {
-            divCreate.innerHTML = showMessageInline('danger', 'Ocorreu um erro, tente novamente!', 6000);
+            divCreate.innerHTML = '';
         } finally {
             btnSubmit.disabled = false;
         }
@@ -203,7 +225,7 @@ window.onload = function() {
                 divBuscar.innerHTML = userTable(response.data.data);
             }
         } catch (error) {
-            divBuscar.innerHTML = showMessageInline('danger', 'Ocorreu um erro ao buscar', 6000);
+            divBuscar.innerHTML = '';
         }
     });
 
@@ -259,8 +281,7 @@ window.onload = function() {
                     showMessage('danger', response.data.message);
                 }
             } catch (error) {
-                    showMessage('danger', 'Ocorreu um erro ao excluir.');
-                console.log('Ocorreu um erro: ' + error);
+                console.log('Erro ao excluir: ' + error);
             }
         }
     });
