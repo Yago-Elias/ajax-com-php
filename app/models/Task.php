@@ -40,6 +40,7 @@ class Task extends Model {
         $update = $this->connection->prepare($sql);
         $update->bindValue(':title', $title);
         $update->bindValue(':description', $description);
+        $update->bindValue(':id', $id);
         $update->execute();
 
         return $update->rowCount() > 0;
