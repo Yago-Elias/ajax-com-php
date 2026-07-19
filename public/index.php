@@ -61,6 +61,30 @@
             </div>
             <hr>
         </div>
+
+        <div class="modal fade" id="modal-tasks" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Tarefas de <span id="modal-tasks-username"></span></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-task-create">
+                            <div class="form-group">
+                                <input type="text" id="task-title" class="form-control" placeholder="Título da tarefa">
+                            </div>
+                            <div class="form-group">
+                                <textarea id="task-description" class="form-control" placeholder="Descrição (opcional)"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Adicionar tarefa</button>
+                        </form>
+                        <hr>
+                        <div id="div-tasks-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

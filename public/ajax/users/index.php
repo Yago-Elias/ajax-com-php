@@ -5,7 +5,7 @@ require '../../../config.php';
 use app\models\User;
 
 $user = new User;
-$id = $_GET['id'];
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if ($id) {
     $data = $user->find('id', $id);

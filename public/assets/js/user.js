@@ -1,12 +1,18 @@
-const api = axios.create({
+const apiUser = axios.create({
     baseURL: 'ajax/users'
 });
 
+const apiTask = axios.create({
+    baseURL: 'ajax/tasks'
+});
+
 const ROUTE_CREATE = 'create.php';
-const ROUTE_READ   = 'user.php';
+const ROUTE_INDEX  = 'index.php';
 const ROUTE_UPDATE = 'update.php';
 const ROUTE_DELETE = 'delete.php';
+
 const ROUTE_SEARCH = 'search.php';
+const ROUTE_STATUS = 'status.php';
 
 function escapeHtml(text) {
     if (text == null) return '';
@@ -52,6 +58,45 @@ window.onload = function() {
     var inputName = document.getElementById('input-name');
     var inputEmail = document.getElementById('input-email');
 
+    var currentTaskUserId = null;
+    var modalTasks = document.getElementById('modal-tasks');
+    var divTasksList = document.getElementById('div-tasks-list');
+    var formTaskCreate = document.getElementById('form-task-create');
+
+    function taskTable(tasks) {
+        if (!tasks.length) {
+            return '<p class="text-muted">Nenhuma tarefa cadastrada.</p>';
+        }
+
+        var html = '<ul class="list-group">';
+        tasks.forEach(function(task) {
+            var done = task.status === 'done';
+            html += `<li class="list-group-item" data-id="${task.id}">`;
+            html += `<label style="cursor:pointer; ${done ? 'text-decoration: line-through; color: #999;' : ''}">`;
+            html += `<input type="checkbox" class="chk-task-status" data-id="${task.id}" ${done ? 'checked' : ''}> `;
+            html += `${escapeHtml(task.title)}`;
+            html += `</label>`;
+            if (task.description) {
+                html += `<p class="text-muted" style="margin: 4px 0 0 22px; font-size: 0.9em;">${escapeHtml(task.description)}</p>`;
+            }
+            html += `<button type="button" class="btn btn-xs btn-delete-task pull-right" data-id="${task.id}"><i class="fa fa-trash"></i></button>`;
+            html += `</li>`;
+        });
+        html += '</ul>';
+
+        return html;
+    }
+
+    async function loadTasks() {
+        showLoading(divTasksList);
+        try {
+            const response = await apiTask.get(ROUTE_INDEX, { params: { user_id: currentTaskUserId } });
+            divTasksList.innerHTML = taskTable(response.data.data);
+        } catch (error) {
+            divTasksList.innerHTML = '';
+        }
+    }
+
     function userTable(users) {
         var table = `<table class="table table-striped">`;
         table += `<thead><tr><td>ID</td><td>Nome</td><td>Email</td><td>Ações</td></tr></thead>`;
@@ -62,7 +107,8 @@ window.onload = function() {
             table += `<td>${escapeHtml(user.name)}</td>`;
             table += `<td>${escapeHtml(user.email)}</td>`;
             table += `<td>`;
-            table += `<button type="button" class="btn btn-edit-user" data-id="${user.id}"><i class="fa fa-pencil fa-fw"></i></button>`;
+            table += `<button type="button" class="btn btn-tasks-user" data-id="${user.id}" data-name="${escapeHtml(user.name)}"><i class="fa fa-tasks fa-fw"></i></button> `;
+            table += `<button type="button" class="btn btn-edit-user" data-id="${user.id}"><i class="fa fa-pencil fa-fw"></i></button> `;
             table += `<button type="button" class="btn btn-delete-user" data-id="${user.id}"><i class="fa fa-trash fa-fw"></i></button>`;
             table += `</td>`;
             table += `</tr>`;
@@ -76,7 +122,7 @@ window.onload = function() {
         showLoading(divUsers);
 
         try {
-            const response = await api.get(ROUTE_READ, null);
+            const response = await apiUser.get(ROUTE_INDEX, null);
             divUsers.innerHTML = userTable(response.data.data);
         } catch (error) {
             divUsers.innerHTML = '';
@@ -199,14 +245,14 @@ window.onload = function() {
         try {
             if (editingUserId) {
                 payload.append('id', editingUserId);
-                const response = await api.post(ROUTE_UPDATE, payload);
+                const response = await apiUser.post(ROUTE_UPDATE, payload);
                 let status = response.data.success ? 'success' : 'danger';
                 divCreate.innerHTML = showMessageInline(status, response.data.message, 6000);
                 editingUserId = null;
                 titleMenu.innerHTML = 'Cadastrar';
                 btnUpdate.innerHTML = 'Cadastrar';
             } else {
-                const response = await api.post(ROUTE_CREATE, payload);
+                const response = await apiUser.post(ROUTE_CREATE, payload);
                 let status = response.data.success ? 'success' : 'danger';
                 divCreate.innerHTML = showMessageInline(status, response.data.message, 6000);
             }
@@ -235,7 +281,7 @@ window.onload = function() {
         showLoading(divBuscar);
 
         try {
-            const response = await api.post(ROUTE_SEARCH, form);
+            const response = await apiUser.post(ROUTE_SEARCH, form);
 
             if (!response.data.success) {
                 divBuscar.innerHTML = response.data.message;
@@ -250,6 +296,7 @@ window.onload = function() {
     divUsers.addEventListener('click', async function(event) {
         var editBtn = event.target.closest('.btn-edit-user');
         var deleteBtn = event.target.closest('.btn-delete-user');
+        var tasksBtn = event.target.closest('.btn-tasks-user');
         btnUpdate = document.getElementById('btn-signup');
 
         var signupMenu = document.getElementById('signup-menu');
@@ -263,7 +310,7 @@ window.onload = function() {
             inputEmail = document.getElementById('input-email');
             
             try {
-                const response = await api.get(ROUTE_READ, {params: {id: idUser}});
+                const response = await apiUser.get(ROUTE_INDEX, {params: {id: idUser}});
                 var user = response.data.data;
                 editingUserId = user.id;
                 inputName.value = user.name;
@@ -280,9 +327,7 @@ window.onload = function() {
             } catch (error) {
                 console.log('Ocorreu um erro: ' + error);
             }
-        }
-
-        if (deleteBtn) {
+        } else if (deleteBtn) {
             var idUser = deleteBtn.dataset.id;
 
             var confirmed = confirm('Deseja realmente excluir o usuário?');
@@ -291,7 +336,7 @@ window.onload = function() {
             var payload = new URLSearchParams();
             payload.append('id', idUser);
             try {
-                const response = await api.post(ROUTE_DELETE, payload);
+                const response = await apiUser.post(ROUTE_DELETE, payload);
                 if (response.data.success) {
                     showMessage('success', response.data.message);
                     loadUsers();
@@ -300,6 +345,78 @@ window.onload = function() {
                 }
             } catch (error) {
                 console.log('Erro ao excluir: ' + error);
+            }
+        } else if (tasksBtn) {
+            currentTaskUserId = tasksBtn.dataset.id;
+            document.getElementById('modal-tasks-username').textContent = tasksBtn.dataset.name;
+            formTaskCreate.reset();
+            $('#modal-tasks').modal('show');
+            loadTasks();
+        }
+    });
+
+    formTaskCreate.onsubmit = async function(event) {
+        event.preventDefault();
+
+        var title = document.getElementById('task-title').value;
+        var description = document.getElementById('task-description').value;
+
+        if (!title.trim()) {
+            showMessage('danger', 'O título da tarefa é obrigatório.');
+            return;
+        }
+
+        var payload = new URLSearchParams();
+        payload.append('user_id', currentTaskUserId);
+        payload.append('title', title);
+        payload.append('description', description);
+
+        try {
+            const response = await apiTask.post(ROUTE_CREATE, payload);
+            if (response.data.success) {
+                formTaskCreate.reset();
+                loadTasks();
+            } else {
+                showMessage('danger', response.data.message);
+            }
+        } catch (error) {
+            console.log('Erro ao criar tarefa: ' + error);
+        }
+    };
+
+    divTasksList.addEventListener('click', async function (event) {
+        var checkbox = event.target.closest('.chk-task-status');
+        if (checkbox) {
+            var id = checkbox.dataset.id;
+            var newStatus = checkbox.checked ? 'done' : 'pending';
+
+            var payload = new URLSearchParams();
+            payload.append('id', id);
+            payload.append('status', newStatus);
+
+            try {
+                await apiTask.post(ROUTE_STATUS, payload);
+                loadTasks();
+            } catch (error) {
+                console.log('Erro ao atualizar status: ' + error);
+            }
+        }
+        
+        var deleteTaskBtn = event.target.closest('.btn-delete-task');
+        if (deleteTaskBtn) {
+            console.log('deletar tarefa');
+            var idTask = deleteTaskBtn.dataset.id;
+            var confirmed = confirm('Excluir esta tarefa?');
+            if (!confirmed) return;
+
+            var payload = new URLSearchParams();
+            payload.append('id', idTask);
+
+            try {
+                await apiTask.post(ROUTE_DELETE, payload);
+                loadTasks();
+            } catch (error) {
+                console.log('Erro ao excluir tarefa: ' + error);
             }
         }
     });
