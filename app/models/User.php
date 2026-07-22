@@ -5,6 +5,15 @@ namespace app\models;
 class User extends Model {
     protected $table = 'users';
 
+    public function authenticate($email, $password) {
+        $user = $this->findByEmail($email);
+        if ($user && password_verify($password, $user->password)) {
+            return $user;
+        }
+        
+        return false;
+    }
+
     public function create($name, $email) {
         $sql = "insert into {$this->table}(name, email) values(:name, :email)";
         $create = $this->connection->prepare($sql);
