@@ -4,6 +4,8 @@ require '../../../config.php';
 
 use app\models\User;
 
+requireRole('admin');
+
 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 $name = trim(filter_input(INPUT_POST, 'name', FILTER_DEFAULT) ?? '');
 $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);

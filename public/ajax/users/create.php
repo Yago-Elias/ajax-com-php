@@ -4,6 +4,8 @@ require "../../../config.php";
 
 use app\models\User;
 
+requireRole('admin');
+
 $user = new User;
 
 $name = trim(filter_input(INPUT_POST, 'name', FILTER_DEFAULT) ?? '');

@@ -4,6 +4,8 @@ require '../../../config.php';
 
 use app\models\User;
 
+requireRole('admin');
+
 $user = new User;
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 

@@ -4,6 +4,8 @@ require '../../../config.php';
 
 use app\models\User;
 
+requireRole('admin');
+
 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 $user = new User;
 $deleted = $user->delete($id);

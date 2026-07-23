@@ -4,7 +4,9 @@ require "../../../config.php";
 
 use app\models\Task;
 
-$user_id = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
+requireAuth();
+
+$user_id = $_SESSION['user_id'];
 $title = trim(filter_input(INPUT_POST, 'title', FILTER_DEFAULT) ?? '');
 $description = trim(filter_input(INPUT_POST, 'description', FILTER_DEFAULT) ?? '');
 
