@@ -9,9 +9,15 @@ requireRole('admin');
 $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 $name = trim(filter_input(INPUT_POST, 'name', FILTER_DEFAULT) ?? '');
 $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+$password = trim(filter_input(INPUT_POST, 'password', FILTER_DEFAULT) ?? '');
 
 if (!$email) {
     echo json_encode(['success' => false, 'message' => 'E-mail inválido.']);
+    exit;
+}
+
+if ($password && strlen($password) < 8) {
+    echo json_encode(['success' => false, 'message' => 'A senha deve ter pelo menos 8 caracteres.']);
     exit;
 }
 
@@ -26,7 +32,7 @@ if ($exist) {
     exit;
 }
 
-$updated = $user->update($id, $name, $email);
+$updated = $user->update($id, $name, $email, $password ?: null);
 
 echo json_encode([
     'success' => (bool) $updated,

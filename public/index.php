@@ -43,6 +43,11 @@
                             <span class="help-block" id="error-email"></span>
                         </div>
 
+                        <div class="form-group">
+                            <label for="">Senha</label>
+                            <input type="password" id="input-password" class="form-control" name="password" placeholder="Senha (mín. 8 caracteres)">
+                        </div>
+
                         <button type="submit" id="btn-signup" class="btn btn-primary">Cadastrar</button>
                     </form>
                 </div>

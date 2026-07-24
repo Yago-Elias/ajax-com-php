@@ -57,6 +57,7 @@ window.onload = function() {
     var btnUpdate = null;
     var inputName = document.getElementById('input-name');
     var inputEmail = document.getElementById('input-email');
+    var inputPassword = document.getElementById('input-password');
 
     var currentTaskUserId = null;
     var modalTasks = document.getElementById('modal-tasks');
@@ -240,25 +241,33 @@ window.onload = function() {
         var payload = new URLSearchParams;
         payload.append('name', inputName.value);
         payload.append('email', inputEmail.value);
+        payload.append('password', inputPassword.value);
         
         showLoading(divCreate);
         try {
             if (editingUserId) {
                 payload.append('id', editingUserId);
                 const response = await apiUser.post(ROUTE_UPDATE, payload);
-                let status = response.data.success ? 'success' : 'danger';
+                var status = response.data.success ? 'success' : 'danger';
                 divCreate.innerHTML = showMessageInline(status, response.data.message, 6000);
-                editingUserId = null;
-                titleMenu.innerHTML = 'Cadastrar';
-                btnUpdate.innerHTML = 'Cadastrar';
+                
+                if (status === 'danger') {
+                    inputPassword.value = '';
+                } else {
+                    editingUserId = null;
+                    titleMenu.innerHTML = 'Cadastrar';
+                    btnUpdate.innerHTML = 'Cadastrar';
+                }
             } else {
                 const response = await apiUser.post(ROUTE_CREATE, payload);
                 let status = response.data.success ? 'success' : 'danger';
                 divCreate.innerHTML = showMessageInline(status, response.data.message, 6000);
             }
 
-            formSignup.reset();
-            loadUsers();
+            if (status === 'success') {
+                formSignup.reset();
+                loadUsers();
+            }
         } catch (error) {
             divCreate.innerHTML = '';
         } finally {

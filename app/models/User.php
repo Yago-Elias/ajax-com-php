@@ -14,11 +14,13 @@ class User extends Model {
         return false;
     }
 
-    public function create($name, $email) {
-        $sql = "insert into {$this->table}(name, email) values(:name, :email)";
+    public function create($name, $email, $password, $role = 'user') {
+        $sql = "insert into {$this->table}(name, email, password, role) values(:name, :email, :password, :role)";
         $create = $this->connection->prepare($sql);
         $create->bindValue(':name', $name);
         $create->bindValue(':email', $email);
+        $create->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
+        $create->bindValue(':role', $role);
         $create->execute();
 
         return $this->connection->lastInsertId();
@@ -33,12 +35,21 @@ class User extends Model {
         return $search_user->fetchAll();
     }
 
-    public function update($id, $name, $email) {
-        $sql = "update {$this->table} set name = :name, email = :email where id = :id";
+    public function update($id, $name, $email, $password = null) {
+        if ($password) {
+            $sql = "update {$this->table} set name = :name, email = :email, password = :password where id = :id";
+        } else {
+            $sql = "update {$this->table} set name = :name, email = :email where id = :id";
+        }
         $update_user = $this->connection->prepare($sql);
         $update_user->bindValue(':id', $id);
         $update_user->bindValue(':name', $name);
         $update_user->bindValue(':email', $email);
+
+        if ($password) {
+            $update_user->bindValue(':password', password_hash($password, PASSWORD_DEFAULT));
+        }
+        
         $update_user->execute();
 
         return $update_user->rowCount() > 0;
